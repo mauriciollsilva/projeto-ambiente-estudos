@@ -2,7 +2,7 @@
 FROM node:20-alpine AS deps
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci
+RUN npm install
 
 # ---- Estágio 2: Desenvolvimento (padrão no docker-compose) ----
 FROM node:20-alpine AS dev
