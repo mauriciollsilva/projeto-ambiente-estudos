@@ -2,7 +2,6 @@
  * Script de seed: popula disciplinas e conteúdos de exemplo.
  * Execute com: npm run seed
  */
-import 'dotenv/config'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { Pool } from 'pg'
 import * as schema from '../lib/db/schema'
