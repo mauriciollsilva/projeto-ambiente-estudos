@@ -55,7 +55,7 @@ services:
       # Evita sobrescrever node_modules do container
       - /app/node_modules
       - /app/.next
-    command: sh -c "npm run db:migrate && npm run seed && npm run dev"
+    command: sh -c "npm run db:generate && npm run db:migrate && npm run seed && npm run dev"
     networks:
       - sgai-net
 
