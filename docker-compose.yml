@@ -33,17 +33,12 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    # Carrega todas as variáveis do .env.local para dentro do container
+    env_file:
+      - .env.local
     environment:
+      # Sobrescreve o DATABASE_URL para usar o banco interno do Docker
       DATABASE_URL: postgresql://sgai:sgai@db:5432/sgai
-      NEXTAUTH_SECRET: dev_secret_change_in_production
-      SMTP_HOST: ${SMTP_HOST:-smtp.gmail.com}
-      SMTP_PORT: ${SMTP_PORT:-587}
-      SMTP_USER: ${SMTP_USER:-}
-      SMTP_PASS: ${SMTP_PASS:-}
-      ALERT_EMAIL_TO: ${ALERT_EMAIL_TO:-}
-      UPLOAD_DIR: /tmp/uploads
-      CRON_SECRET: ${CRON_SECRET:-dev_cron_secret}
-      NEXT_PUBLIC_APP_URL: http://localhost:3000
       # Necessário para hot-reload funcionar corretamente no WSL2
       CHOKIDAR_USEPOLLING: 'true'
       WATCHPACK_POLLING: 'true'
