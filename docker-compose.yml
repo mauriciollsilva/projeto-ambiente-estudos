@@ -1,0 +1,63 @@
+version: '3.9'
+
+services:
+  # Banco de dados PostgreSQL
+  db:
+    image: postgres:16-alpine
+    container_name: sgai_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: sgai
+      POSTGRES_PASSWORD: sgai
+      POSTGRES_DB: sgai
+    ports:
+      - '5432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - sgai-net
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U sgai']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Aplicação Next.js
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev
+    container_name: sgai_app
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    # Carrega todas as variáveis do .env.local para dentro do container
+    env_file:
+      - .env.local
+    environment:
+      # Sobrescreve o DATABASE_URL para usar o banco interno do Docker
+      DATABASE_URL: postgresql://sgai:sgai@db:5432/sgai
+      # Necessário para hot-reload funcionar corretamente no WSL2
+      CHOKIDAR_USEPOLLING: 'true'
+      WATCHPACK_POLLING: 'true'
+    ports:
+      - '3000:3000'
+    volumes:
+      # Monta o código local para hot-reload
+      - .:/app
+      # Evita sobrescrever node_modules do container
+      - /app/node_modules
+      - /app/.next
+    command: sh -c "npm run db:generate && npm run db:migrate && npm run seed && npm run dev"
+    networks:
+      - sgai-net
+
+volumes:
+  pgdata:
+    driver: local
+
+networks:
+  sgai-net:
+    driver: bridge
