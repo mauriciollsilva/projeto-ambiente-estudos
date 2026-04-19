@@ -33,9 +33,10 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    # Carrega todas as variáveis do .env.local para dentro do container
+    # Carrega todas as variáveis do .env.local para dentro do container (opcional)
     env_file:
-      - .env.local
+      - path: .env.local
+        required: false
     environment:
       # Sobrescreve o DATABASE_URL para usar o banco interno do Docker
       DATABASE_URL: postgresql://sgai:sgai@db:5432/sgai
